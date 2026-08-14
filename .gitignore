@@ -1,0 +1,8 @@
+.DS_Store
+Rplots.pdf
+*.rds
+data/
+results/bench_full/
+theory/
+.Rproj.user/
+.Rhistory
