@@ -1,7 +1,7 @@
 # ==============================================================================
 # 21_eb_tau2_sensitivity.R
 #
-# Empirical-Bayes estimation of the slab variance tau^2 (Supplementary Note S7.2).
+# Empirical-Bayes estimation of the slab variance tau^2 (Supplementary Note S5).
 #
 # The conditional Bayes factor at a fixed variance ratio delta is a smooth scalar
 # function of tau^2, so an empirical-Bayes slab is available in closed form: at

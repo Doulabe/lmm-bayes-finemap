@@ -89,6 +89,24 @@ See [`examples/quickstart.R`](examples/quickstart.R) for a complete runnable
 example and [`examples/real_data_example.R`](examples/real_data_example.R) for a
 minimal mouse-BMI analysis.
 
+### Choosing the slab variance $\tau^2$ (empirical-Bayes option)
+
+The default $\tau^2 = 0.04$ corresponds to a prior standard deviation of $0.2$
+residual-scale units for a standardized candidate effect; in applications it
+can be anchored to the anticipated standardized effect size.  Because the
+conditional Bayes factor is available in closed form in $\tau^2$, a per-step
+**empirical-Bayes estimate** of the slab along the selection path is provided:
+
+```bash
+Rscript sim/bench_full/21_eb_tau2_sensitivity.R
+```
+
+The script ranks candidates at the default, maximizes the closed-form Bayes
+factor in $\tau^2$ for the leading candidate at each step (`tau2_mode = "eb"`
+in the in-script stepwise), reports the distribution of the per-step estimates,
+and verifies that the selected sets match the fixed default on the anchor
+design (Supplementary Note S5 of the manuscript).
+
 ## Repository layout
 
 ```
