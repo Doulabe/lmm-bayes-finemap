@@ -36,7 +36,7 @@ install.packages(c("susieR", "rrBLUP", "BGLR", "hibayes"))
 - `susieR` — Sum-of-Single-Effects credible-set comparator (Wang et al.,
   2020).
 - `rrBLUP` — REML estimator used by the FaST-LMM-equivalent comparator
-  and by the plug-in REML-BF evaluation.
+  and by the plug-in REML sensitivity evaluation of delta.
 - `BGLR` — provides the BSLMM comparator (`model = "BSLMM"`) and the
   Bayesian-Lasso runner; also ships the Valdar et al. (2006)
   heterogeneous-stock mouse panel as `data(mice)`.

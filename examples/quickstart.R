@@ -1,9 +1,10 @@
 # ==============================================================================
 # examples/quickstart.R
 #
-# Minimal 30-line demo of the Bayesian stepwise marginal-likelihood framework.
-# Simulates a small dataset (n = 500, m = 300, K_true = 3) and runs both the
-# marginal and joint variants with eBIC stopping.
+# Minimal demo of CBF-LMM (conditional Bayes factor + marginalized delta +
+# eBIC stopping).  Simulates a small dataset (n = 500, m = 300, K_true = 3),
+# runs the primary procedure, then two optional runs: the plug-in REML
+# sensitivity evaluation and the exploratory joint Schur-complement score.
 #
 # Run from the repository root:
 #   Rscript examples/quickstart.R
@@ -11,6 +12,8 @@
 
 source("R/LMM_core.R")
 source("R/LMM_stepwise_fast.R")
+source("R/LMM_reml_bf.R")
+source("R/CBF_LMM.R")
 
 set.seed(42)
 n <- 500L; m <- 300L
@@ -32,16 +35,20 @@ X <- scale(X)
 # Outcome with three causal effects plus iid noise
 y <- as.numeric(X[, truth] %*% beta_true) + rnorm(n)
 
-cat("=== Marginal variant (MS_L_eBIC) ===\n")
-res_ms <- MS_L_LMM_stepwise_fast(y, X, tau2 = 0.04, K_max = 10L,
-                                      criterion = "eBIC", theta = 0.99,
-                                      n_nodes = 15L)
-cat("Selected indices:", res_ms$indices, "\n")
+cat("=== CBF-LMM (primary: marginalized delta + eBIC) ===\n")
+res <- CBF_LMM_stepwise(y, X, tau2 = 0.04, K_max = 10L, n_nodes = 15L)
+cat("Selected indices:", res$indices, "\n")
 cat("Truth:           ", truth, "\n")
-cat("K_hat:", res_ms$K_hat, " q_at_step:",
-     round(res_ms$q_at_step, 3), "\n\n")
+cat("K_hat:", res$K_hat, " q_at_step:",
+     round(res$q_at_step, 3), "\n\n")
 
-cat("=== Joint variant (JS_L_eBIC) ===\n")
+cat("=== Sensitivity: plug-in REML evaluation of delta ===\n")
+res_reml <- CBF_LMM_stepwise(y, X, tau2 = 0.04, K_max = 10L,
+                             delta_eval = "reml")
+cat("Selected indices:", res_reml$indices, "\n")
+cat("K_hat:", res_reml$K_hat, "\n\n")
+
+cat("=== Exploratory: joint Schur-complement score (future work) ===\n")
 res_js <- JS_L_LMM_stepwise_fast(y, X, tau2 = 0.04, K_max = 10L,
                                       criterion = "eBIC", theta = 0.99,
                                       n_nodes = 15L)

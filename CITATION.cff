@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: >-
-  Conditional Bayesian Stepwise Refinement for Fine-Mapping in
-  Gaussian Linear Mixed Models
+  CBF-LMM: Conditional Bayes-Factor Stepwise Refinement for
+  Fine-Mapping in Gaussian Linear Mixed Models
 message: >-
   If you use this software, please cite both the manuscript and the
   software itself using the metadata below.
@@ -20,18 +20,17 @@ authors:
       Département de Mathématiques et de Statistique, Université Laval,
       Québec, Canada
 abstract: >-
-  A conditional, covariate-aware Bayesian stepwise framework for
+  CBF-LMM is a conditional Bayes-factor stepwise procedure for
   refining candidate regions in the Gaussian linear mixed model.  At
   each step the candidate-specific marginal likelihood integrates the
-  residual variance analytically; the variance-component ratio is
-  handled either by a plug-in REML evaluation (REML-BF, the balanced
-  default) or by numerical Gauss-Legendre marginalisation (MBF,
-  conservative).  The framework subsumes Wakefield's approximate Bayes
-  factor as a special case, adds a joint Schur-complement variant that
-  stays stable under within-block LD saturation, and controls the
-  selected-set size with the extended BIC; covariate adjustment is
-  built into the conditioning matrix without modifying the
-  Bayes-factor algebra.
+  residual variance analytically and the variance-component ratio is
+  numerically marginalised by one-dimensional Gauss-Legendre
+  quadrature; selection is controlled by the extended BIC.  The
+  conditional Bayes factor subsumes Wakefield's approximate Bayes
+  factor as a special case.  A plug-in REML evaluation of the
+  variance-component ratio and a posterior-score stopping rule are
+  provided as sensitivity options, and an exploratory joint
+  Schur-complement score is retained for future development.
 keywords:
   - "Bayesian variable selection"
   - "linear mixed model"
@@ -45,7 +44,7 @@ license: MIT
 preferred-citation:
   type: article
   title: >-
-    Conditional Bayesian Stepwise Refinement for Fine-Mapping in
+    Conditional Bayes-Factor Stepwise Refinement for Fine-Mapping in
     Gaussian Linear Mixed Models
   authors:
     - family-names: Doulabe

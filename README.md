@@ -1,21 +1,32 @@
-# Conditional Bayesian Stepwise Refinement for Fine-Mapping in Gaussian Linear Mixed Models
+# CBF-LMM: Conditional Bayes-Factor Stepwise Refinement for Fine-Mapping in Gaussian Linear Mixed Models
 
-A conditional, covariate-aware Bayesian stepwise framework for **refining**
+**CBF-LMM** is a conditional Bayes-factor stepwise procedure for **refining**
 candidate regions in the Gaussian linear mixed model.  At each step a candidate
-SNP enters as a fixed effect while the already-selected SNPs and any external
-covariates form the conditioning block; the residual variance is integrated out
-analytically and the variance-component ratio $\delta$ is handled in one of two
-ways — a fast **plug-in REML** evaluation (**REML-BF**, the balanced default) or
-a **numerical marginalisation** over $\delta$ by one-dimensional Gauss–Legendre
-quadrature (**MBF**, conservative).  Selection is controlled by the extended BIC.
+SNP enters as a fixed effect while the already-selected SNPs form the
+conditioning block; the residual variance is integrated out analytically, the
+variance-component ratio $\delta$ is **numerically marginalised** by
+one-dimensional Gauss–Legendre quadrature, and selection is controlled by the
+extended BIC.  A fast **plug-in REML** evaluation of $\delta$ and a
+posterior-score stopping rule are available as **sensitivity options**, and an
+exploratory **joint Schur-complement** score is retained for future development.
 
-> Reference: K. N. Doulabe and L. Lakhal-Chaieb, *Conditional Bayesian Stepwise
-> Refinement for Fine-Mapping in Gaussian Linear Mixed Models*, 2026 (submitted).
+> Reference: K. N. Doulabe and L. Lakhal-Chaieb, *Conditional Bayes-Factor
+> Stepwise Refinement for Fine-Mapping in Gaussian Linear Mixed Models*,
+> 2026 (submitted).
 
 The method is positioned as a **second-stage refinement tool** downstream of a
 genome-wide screen or a marginal Bayesian fine-mapper (e.g. SuSiE), not as a
 replacement for them: it returns a compact, parsimony-controlled set of
-candidates with explicit adjustment for known fixed covariates.
+candidates.
+
+## Paper-to-code name mapping
+
+| Paper | Code | Status |
+|---|---|---|
+| **CBF-LMM** (primary) | `CBF_LMM_stepwise()` = `MS_L_LMM_stepwise_fast()` with defaults (`delta_eval = "marginal"`, `criterion = "eBIC"`) | primary |
+| Plug-in REML evaluation | `delta_eval = "reml"` | sensitivity |
+| Posterior-score stopping | `criterion = "JointPosterior"` | sensitivity |
+| Joint Schur-complement score | `JS_L_LMM_stepwise_fast()` | exploratory / future work |
 
 ## Highlights
 
@@ -24,18 +35,18 @@ candidates with explicit adjustment for known fixed covariates.
   Jeffreys prior on $\sigma^2$, and weakly-informative priors on the nuisance
   parameters.  Strictly generalises the Wakefield approximate Bayes factor
   (recovered as $\delta \to 0$ at $k = 1$).
-- **Two variance-ratio operating points**: plug-in **REML-BF** (balanced
-  recall/precision, the default) and $\delta$-marginalised **MBF**
-  (conservative, higher precision).  Their agreement at fine-mapping sample
-  sizes is established empirically; **REML-BF** is justified by an
-  $O_p(n^{-1/2})$ asymptotic-equivalence result.
-- **Joint variant via Schur complement** that remains stable under within-block
-  LD saturation, where Wakefield-type expansions underestimate evidence.
-- **Covariate adjustment built-in**: the conditioning matrix
-  $F_k = [W, X_{S_{k-1}}]$ accepts any fixed covariates $W$ (intercept, sex,
-  batch, family, …) without modification to the Bayes-factor algebra.
-- **Two stopping rules**: extended BIC (eBIC, parsimony-oriented, $\gamma = 1$)
-  and JointPosterior at $\theta = 0.99$ (recall-oriented).
+- **Primary operating point (CBF-LMM)**: $\delta$-marginalised evaluation
+  (Gauss–Legendre quadrature over a half-Cauchy prior on $\sqrt\delta$) with
+  eBIC stopping ($\gamma = 1$, parsimony-oriented).
+- **Sensitivity options**: a fast plug-in **REML** evaluation of $\delta$
+  (justified by an $O_p(n^{-1/2})$ asymptotic-equivalence result and in close
+  empirical agreement at fine-mapping sample sizes) and a posterior-score
+  stopping rule (`criterion = "JointPosterior"`, recall-oriented).
+- **Covariate extension**: the conditioning block extends to arbitrary fixed
+  covariates (sex, batch, family, …) without modification to the Bayes-factor
+  algebra; this extension and the exploratory **joint Schur-complement** score
+  (more stable under within-block LD saturation) are discussed as future
+  directions in the manuscript.
 - **Comparators** (same $X$, $y$, GRM): BSLMM and BayesR (joint Bayesian LMM),
   SuSiE (credible-set), and FaST-LMM (frequentist single-SNP).
 - **Sensitivity suite**: slab variance $\tau^2$, a closed-form empirical-Bayes
@@ -51,7 +62,8 @@ candidates with explicit adjustment for known fixed covariates.
 # Load the framework
 source("R/LMM_core.R")
 source("R/LMM_stepwise_fast.R")
-source("R/LMM_reml_bf.R")        # needed for delta_eval = "reml"
+source("R/LMM_reml_bf.R")        # needed for the delta_eval = "reml" sensitivity option
+source("R/CBF_LMM.R")            # paper-facing alias
 
 # Simulate a small dataset: n=500, m=300, K_true=3 active SNPs
 n <- 500L; m <- 300L; K_true <- 3L
@@ -62,18 +74,15 @@ truth <- c(50L, 120L, 200L)
 beta_true <- c(0.8, 0.4, 0.4)
 y <- as.numeric(X[, truth] %*% beta_true) + rnorm(n)
 
-# Marginal variant, eBIC stopping. delta_eval selects the operating point:
-#   "marginal" (default) -> MBF, conservative, numerical marginalisation of delta
-#   "reml"               -> REML-BF, balanced default for routine refinement
-res <- MS_L_LMM_stepwise_fast(y, X,
-                              tau2 = 0.04,
-                              K_max = 10L,
-                              criterion = "eBIC",
-                              delta_eval = "reml",   # balanced REML-BF; "marginal" for MBF
-                              n_nodes = 15L)
+# Primary procedure (CBF-LMM): marginalised delta + eBIC stopping — the defaults.
+res <- CBF_LMM_stepwise(y, X, tau2 = 0.04, K_max = 10L, n_nodes = 15L)
 cat("Selected indices:", res$indices, "\n")
 cat("Truth:           ", truth, "\n")
 cat("K_hat:", res$K_hat, " (true K_true =", K_true, ")\n")
+
+# Sensitivity option: plug-in REML evaluation of delta
+res_reml <- CBF_LMM_stepwise(y, X, tau2 = 0.04, K_max = 10L,
+                             delta_eval = "reml")
 ```
 
 See [`examples/quickstart.R`](examples/quickstart.R) for a complete runnable
@@ -94,7 +103,8 @@ minimal mouse-BMI analysis.
 │   ├── LMM_stepwise_fast.R       Batched version (delta_eval = "marginal"/"reml")
 │   ├── LMM_reml_bf.R             Plug-in REML-BF evaluation (delta_eval = "reml")
 │   ├── LMM_stepwise_mixtau.R     Mixture-slab variant (sensitivity)
-│   └── LMM_stepwise_pathavg.R    Path-averaged variant (exploratory)
+│   ├── LMM_stepwise_pathavg.R    Path-averaged variant (exploratory)
+│   └── CBF_LMM.R                 Paper-facing alias CBF_LMM_stepwise()
 ├── sim/                       Simulation and benchmark scripts
 │   ├── bench_full/               Full reproducibility pipeline
 │   │   ├── 00_config.R              Common configuration + comparator runners
@@ -120,6 +130,8 @@ minimal mouse-BMI analysis.
 │   │   ├── 25_semisynth_1000g.R    Semi-synthetic benchmark on real 1000G panels
 │   │   ├── 99_aggregate.R           Pool & summarise raw RDS files
 │   │   ├── make_*.R                 LaTeX table / figure generators
+│   │   ├── make_cbf_figures.R       CBF-LMM manuscript figures (5-method roster)
+│   │   ├── make_cbf_rho_table.R     CBF-LMM LD-axis supplement table
 │   │   └── run_all.R                Single-command driver (axes 01–06)
 │   └── validate_lmm_bayes.R      Six-check internal validation (V1–V6)
 ├── examples/                  Minimal demos
@@ -185,6 +197,10 @@ Rscript sim/bench_full/make_bmi_sex_table.R
 #     Requires the two locus panels — see "Semi-synthetic 1000G benchmark" below.
 Rscript sim/bench_full/25_semisynth_1000g.R --B 200
 Rscript sim/bench_full/make_semisynth_tables.R         # pooled + per-locus tables
+
+# 8.  CBF-LMM manuscript figures and LD-axis supplement table
+Rscript sim/bench_full/make_cbf_figures.R
+Rscript sim/bench_full/make_cbf_rho_table.R
 ```
 
 ### Semi-synthetic 1000G benchmark
@@ -263,7 +279,7 @@ If you use this code in your work, please cite the manuscript (see
 ```
 @article{Doulabe2026LMMBayes,
   author  = {Doulabe, Kossi N. and Lakhal-Chaieb, Lajmi},
-  title   = {Conditional Bayesian Stepwise Refinement for Fine-Mapping
+  title   = {Conditional Bayes-Factor Stepwise Refinement for Fine-Mapping
              in Gaussian Linear Mixed Models},
   journal = {(submitted)},
   year    = {2026}
