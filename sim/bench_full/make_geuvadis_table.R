@@ -3,12 +3,12 @@
 # LaTeX table for the GEUVADIS cis-eQTL illustration (26_geuvadis_eqtl.R),
 # annotated with the identity of each method's best selected variant.
 #
-# Cell format: rsID of the best selection (highest r^2 to the official lead);
+# Cell format: rsID of the best selection (highest r^2 to the published lead);
 # bold when r^2 = 1.00; otherwise the r^2 follows in parentheses; "+k" marks
 # k additional selected variants; --- marks an empty selection.
 #
 # rsIDs come from data/geuvadis/pos2rs.csv (position -> dbSNP rsID on GRCh37,
-# SNV-disambiguated via the Ensembl GRCh37 REST API; official lead rsIDs are
+# SNV-disambiguated via the Ensembl GRCh37 REST API; published lead rsIDs are
 # reproduced exactly by this annotation).
 #
 # Input : results/bench_full/26_geuvadis/{<gene>.rds, geuvadis_summary.csv}
@@ -73,7 +73,7 @@ wl <- function(...) writeLines(paste0(...), con)
 wl("\\begin{tabular}{l l ", paste(rep("l", length(MORD)), collapse = " "), "}")
 wl("\\toprule")
 wl(" & & \\multicolumn{", length(MORD),
-   "}{c}{Best selected variant (bold: tags the official lead at $r^2 = 1.00$)} \\\\")
+   "}{c}{Best selected variant (bold: tags the published lead at $r^2 = 1.00$)} \\\\")
 wl("\\cmidrule(lr){3-", 2 + length(MORD), "}")
 wl("Gene & Lead eQTL & ", paste(LAB[MORD], collapse = " & "), " \\\\")
 wl("\\midrule")

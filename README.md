@@ -260,7 +260,7 @@ twin and exact-index recovery is not identifiable.
 
 Step 9 fine-maps eight strong cis-eQTL genes in the GEUVADIS LCL panel
 (n = 358 individuals shared with the 1000 Genomes phase-3 EUR reference),
-using the official EUR373 best-association list as the external anchor.
+using the published EUR373 best-association list as a concordance benchmark.
 All inputs are public; genotypes are streamed remotely per locus by
 `bcftools` (required on PATH):
 
@@ -280,7 +280,7 @@ comm -12 data/geuvadis/eur_phase3.txt data/geuvadis/geuvadis_samples.txt \
   > data/geuvadis/geuvadis_eur_overlap.txt   # 358 individuals
 ```
 
-Headline result (best selected variant; **bold** tags the official lead at
+Headline result (best selected variant; **bold** tags the published lead at
 r2 = 1.00; "---" = empty selection at the method's prespecified threshold):
 
 | Gene | Lead eQTL | CBF-LMM | SuSiE | BSLMM | BayesR | FaST-LMM |
@@ -294,7 +294,7 @@ r2 = 1.00; "---" = empty selection at the method's prespecified threshold):
 | TRA2A-AS | rs10233039 | **rs6461691** | --- | rs10266123 (0.99) | --- | --- |
 | ZNF266 | rs10420709 | **rs11878970** | --- | **rs10411141** | --- | --- |
 
-CBF-LMM returns a selection at all eight loci and tags the official lead at
+CBF-LMM returns a selection at all eight loci and tags the published lead at
 r2 = 1.00 at seven of eight; SuSiE's PIP > 0.99 selection is empty at five
 loci (posterior mass split across perfect-LD proxies).
 
