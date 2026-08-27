@@ -280,6 +280,25 @@ comm -12 data/geuvadis/eur_phase3.txt data/geuvadis/geuvadis_samples.txt \
   > data/geuvadis/geuvadis_eur_overlap.txt   # 358 individuals
 ```
 
+Headline result (best selected variant; **bold** tags the official lead at
+r2 = 1.00; "---" = empty selection at the method's prespecified threshold):
+
+| Gene | Lead eQTL | CBF-LMM | SuSiE | BSLMM | BayesR | FaST-LMM |
+|---|---|---|---|---|---|---|
+| ERAP2 | rs2910686 | **rs2927608** | --- | **rs2910686** | **rs2910686** | --- |
+| RPS26 | rs10876864 | **rs10876864** | --- | **rs10876864** | **rs10876864** | --- |
+| SLFN5 | rs11080327 | **rs11080327** | **rs11080327** | rs883416 (0.97) | **rs11080327** | **rs11080327** |
+| SNHG5 | rs1059307 | **rs1059307** | **rs1059307** | **rs1059307** | **rs1059307** | --- |
+| FLVCR1-AS1 | rs12123978 | **rs61832055** | --- | **rs11120042** | **rs10864005** | --- |
+| PEX6-region | rs6907751 | rs9986447 +1 (0.88) | **rs6907751** +1 | rs2296804 (0.63) | rs2296805 (0.63) | --- |
+| TRA2A-AS | rs10233039 | **rs6461691** | --- | rs10266123 (0.99) | --- | --- |
+| ZNF266 | rs10420709 | **rs11878970** | --- | **rs10411141** | --- | --- |
+
+CBF-LMM returns a selection at all eight loci and tags the official lead at
+r2 = 1.00 at seven of eight; SuSiE's PIP > 0.99 selection is empty at five
+loci (posterior mass split across perfect-LD proxies).
+
+
 Each script supports `--cores N` for `mclapply` parallelism and writes per-cell
 RDS checkpoints; re-running an interrupted job resumes from the last completed
 checkpoint.  **Important:** set
