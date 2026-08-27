@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 title: >-
-  CBF-LMM: Conditional Bayes-Factor Stepwise Refinement for
-  Fine-Mapping in Gaussian Linear Mixed Models
+  CBF-LMM: Conditional Bayes-Factor Selection with an Adaptive
+  Polygenic Background
 message: >-
   If you use this software, please cite both the manuscript and the
   software itself using the metadata below.
@@ -21,7 +21,8 @@ authors:
       Québec, Canada
 abstract: >-
   CBF-LMM is a conditional Bayes-factor stepwise procedure for
-  refining candidate regions in the Gaussian linear mixed model.  At
+  refining candidate regions under an adaptive linear mixed-model
+  polygenic background.  At
   each step the candidate-specific marginal likelihood integrates the
   residual variance analytically and the variance-component ratio is
   numerically marginalised by one-dimensional Gauss-Legendre
@@ -44,8 +45,8 @@ license: MIT
 preferred-citation:
   type: article
   title: >-
-    Conditional Bayes-Factor Stepwise Refinement for Fine-Mapping in
-    Gaussian Linear Mixed Models
+    Conditional Bayes-Factor Selection with an Adaptive Polygenic
+    Background
   authors:
     - family-names: Doulabe
       given-names: "Kossi N."

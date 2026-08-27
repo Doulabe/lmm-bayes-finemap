@@ -1,9 +1,10 @@
-# CBF-LMM: Conditional Bayes-Factor Stepwise Refinement for Fine-Mapping in Gaussian Linear Mixed Models
+# CBF-LMM: Conditional Bayes-Factor Selection with an Adaptive Polygenic Background
 
 **CBF-LMM** is a conditional Bayes-factor stepwise procedure for **refining**
-candidate regions in the Gaussian linear mixed model.  At each step a candidate
-SNP enters as a fixed effect while the already-selected SNPs form the
-conditioning block; the residual variance is integrated out analytically, the
+candidate regions under an **adaptive polygenic background**: previously
+selected SNPs enter as fixed effects while the remaining markers define the
+linear mixed-model background kernel, rebuilt along the selection path.  At
+each step a candidate SNP enters as one additional fixed effect; the residual variance is integrated out analytically, the
 variance-component ratio $\delta$ is **numerically marginalised** by
 one-dimensional Gauss–Legendre quadrature, and selection is controlled by the
 extended BIC.  A fast **plug-in REML** evaluation of $\delta$ and a
@@ -11,8 +12,7 @@ posterior-score stopping rule are available as **sensitivity options**, and an
 exploratory **joint Schur-complement** score is retained for future development.
 
 > Reference: K. N. Doulabe and L. Lakhal-Chaieb, *Conditional Bayes-Factor
-> Stepwise Refinement for Fine-Mapping in Gaussian Linear Mixed Models*,
-> 2026 (submitted).
+> Selection with an Adaptive Polygenic Background*, 2026 (submitted).
 
 The method is positioned as a **second-stage refinement tool** downstream of a
 genome-wide screen or a marginal Bayesian fine-mapper (e.g. SuSiE), not as a
@@ -327,8 +327,8 @@ If you use this code in your work, please cite the manuscript (see
 ```
 @article{Doulabe2026LMMBayes,
   author  = {Doulabe, Kossi N. and Lakhal-Chaieb, Lajmi},
-  title   = {Conditional Bayes-Factor Stepwise Refinement for Fine-Mapping
-             in Gaussian Linear Mixed Models},
+  title   = {Conditional Bayes-Factor Selection with an Adaptive
+             Polygenic Background},
   journal = {(submitted)},
   year    = {2026}
 }
