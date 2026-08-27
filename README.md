@@ -2,9 +2,14 @@
 
 **CBF-LMM** is a conditional Bayes-factor stepwise procedure for **refining**
 candidate regions under an **adaptive polygenic background**: previously
-selected SNPs enter as fixed effects while the remaining markers define the
-linear mixed-model background kernel, rebuilt along the selection path.  At
-each step a candidate SNP enters as one additional fixed effect; the residual variance is integrated out analytically, the
+selected SNPs enter as fixed effects and, for each candidate under
+evaluation, the remaining markers *other than that candidate* define its
+linear mixed-model polygenic background (model kernel `K_jk`), rebuilt along
+the selection path.  The released implementation amortises one shared pool
+kernel `G_k` per step — an exact rank-one perturbation of `K_jk`, validated
+at the ranking level (script 24) and at the full-path level (script 28,
+where the amortised path is always an ordered prefix of the exact path).
+The candidate enters as one additional fixed effect; the residual variance is integrated out analytically, the
 variance-component ratio $\delta$ is **numerically marginalised** by
 one-dimensional Gauss–Legendre quadrature, and selection is controlled by the
 extended BIC.  A fast **plug-in REML** evaluation of $\delta$ and a
@@ -145,6 +150,7 @@ design (Supplementary Note S5 of the manuscript).
 │   │   ├── 21_eb_tau2_sensitivity.R Closed-form empirical-Bayes slab (EB-τ²)
 │   │   ├── 22_gamma_sensitivity.R   eBIC penalty γ sensitivity
 │   │   ├── 23_delta_profile_mouse.R δ-profile identifiability diagnostic
+│   │   ├── 24_shared_kernel_validation.R  Shared pool G_k vs model kernel K_jk (per step)
 │   │   ├── 25_semisynth_1000g.R    Semi-synthetic benchmark on real 1000G panels
 │   │   ├── 99_aggregate.R           Pool & summarise raw RDS files
 │   │   ├── make_*.R                 LaTeX table / figure generators
@@ -152,6 +158,7 @@ design (Supplementary Note S5 of the manuscript).
 │   │   ├── make_cbf_rho_table.R     CBF-LMM LD-axis supplement table
 │   │   ├── 26_geuvadis_eqtl.R       GEUVADIS human cis-eQTL illustration
 │   │   ├── make_geuvadis_table.R    GEUVADIS results table
+│   │   ├── 28_path_kernel_validation.R  Full-path validation of the shared-pool amortisation
 │   │   └── run_all.R                Single-command driver (axes 01–06)
 │   └── validate_lmm_bayes.R      Six-check internal validation (V1–V6)
 ├── examples/                  Minimal demos
@@ -225,6 +232,10 @@ Rscript sim/bench_full/make_cbf_rho_table.R
 # 9.  GEUVADIS human cis-eQTL illustration (see data section below)
 Rscript sim/bench_full/26_geuvadis_eqtl.R
 Rscript sim/bench_full/make_geuvadis_table.R
+
+# 10. Shared-pool amortisation validation (Supplementary Note S3)
+Rscript sim/bench_full/24_shared_kernel_validation.R   # per-step ranking agreement
+Rscript sim/bench_full/28_path_kernel_validation.R     # full-path prefix/stopping agreement
 ```
 
 ### Semi-synthetic 1000G benchmark

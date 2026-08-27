@@ -22,13 +22,14 @@ authors:
 abstract: >-
   CBF-LMM is a conditional Bayes-factor stepwise procedure for
   refining candidate regions under an adaptive linear mixed-model
-  polygenic background.  At
+  polygenic background that excludes the candidate under
+  evaluation.  At
   each step the candidate-specific marginal likelihood integrates the
   residual variance analytically and the variance-component ratio is
   numerically marginalised by one-dimensional Gauss-Legendre
   quadrature; selection is controlled by the extended BIC.  The
-  conditional Bayes factor subsumes Wakefield's approximate Bayes
-  factor as a special case.  A plug-in REML evaluation of the
+  conditional Bayes factor recovers Wakefield's approximate Bayes
+  factor asymptotically in the residual degrees of freedom.  A plug-in REML evaluation of the
   variance-component ratio and a posterior-score stopping rule are
   provided as sensitivity options, and an exploratory joint
   Schur-complement score is retained for future development.
