@@ -150,6 +150,8 @@ design (Supplementary Note S5 of the manuscript).
 │   │   ├── make_*.R                 LaTeX table / figure generators
 │   │   ├── make_cbf_figures.R       CBF-LMM manuscript figures (5-method roster)
 │   │   ├── make_cbf_rho_table.R     CBF-LMM LD-axis supplement table
+│   │   ├── 26_geuvadis_eqtl.R       GEUVADIS human cis-eQTL illustration
+│   │   ├── make_geuvadis_table.R    GEUVADIS results table
 │   │   └── run_all.R                Single-command driver (axes 01–06)
 │   └── validate_lmm_bayes.R      Six-check internal validation (V1–V6)
 ├── examples/                  Minimal demos
@@ -219,6 +221,10 @@ Rscript sim/bench_full/make_semisynth_tables.R         # pooled + per-locus tabl
 # 8.  CBF-LMM manuscript figures and LD-axis supplement table
 Rscript sim/bench_full/make_cbf_figures.R
 Rscript sim/bench_full/make_cbf_rho_table.R
+
+# 9.  GEUVADIS human cis-eQTL illustration (see data section below)
+Rscript sim/bench_full/26_geuvadis_eqtl.R
+Rscript sim/bench_full/make_geuvadis_table.R
 ```
 
 ### Semi-synthetic 1000G benchmark
@@ -249,6 +255,30 @@ Recovery is scored in the LD-aware sense standard for real-LD fine-mapping (a
 causal counts as recovered, and a selection as a true positive, at
 `r² ≥ 0.25`), because at `n = 503` a causal variant routinely has a perfect-LD
 twin and exact-index recovery is not identifiable.
+
+### GEUVADIS cis-eQTL illustration
+
+Step 9 fine-maps eight strong cis-eQTL genes in the GEUVADIS LCL panel
+(n = 358 individuals shared with the 1000 Genomes phase-3 EUR reference),
+using the official EUR373 best-association list as the external anchor.
+All inputs are public; genotypes are streamed remotely per locus by
+`bcftools` (required on PATH):
+
+```bash
+mkdir -p data/geuvadis
+B=http://ftp.ebi.ac.uk/pub/databases/microarray/data/experiment/GEUV/E-GEUV-1/analysis_results
+curl -o data/geuvadis/GD462.GeneQuantRPKM.50FN.samplename.resk10.txt.gz \
+     $B/GD462.GeneQuantRPKM.50FN.samplename.resk10.txt.gz
+curl -o data/geuvadis/EUR373.gene.cis.FDR5.best.rs137.txt.gz \
+     $B/EUR373.gene.cis.FDR5.best.rs137.txt.gz
+# sample overlap: GEUVADIS columns intersected with the phase-3 EUR panel
+curl -s http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/integrated_call_samples_v3.20130502.ALL.panel \
+  | awk '$3=="EUR"{print $1}' | sort > data/geuvadis/eur_phase3.txt
+gzcat data/geuvadis/GD462.GeneQuantRPKM.50FN.samplename.resk10.txt.gz | head -1 \
+  | tr '\t' '\n' | grep -E '^HG|^NA' | sort > data/geuvadis/geuvadis_samples.txt
+comm -12 data/geuvadis/eur_phase3.txt data/geuvadis/geuvadis_samples.txt \
+  > data/geuvadis/geuvadis_eur_overlap.txt   # 358 individuals
+```
 
 Each script supports `--cores N` for `mclapply` parallelism and writes per-cell
 RDS checkpoints; re-running an interrupted job resumes from the last completed
