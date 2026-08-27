@@ -308,9 +308,7 @@ MKL_NUM_THREADS=1` to avoid Accelerate/OpenBLAS thread contention under
 
 > Note: the comparison is restricted to methods that model the polygenic
 > background jointly (BSLMM, BayesR) or via credible-set decomposition
-> (SuSiE), plus a frequentist LMM reference (FaST-LMM).  A marginal
-> non-LMM spike-and-slab (`varbvs`) falls outside this comparator class
-> and is not included.
+> (SuSiE), plus a frequentist LMM reference (FaST-LMM). 
 
 ## Internal validation
 
