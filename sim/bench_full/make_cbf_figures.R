@@ -1,10 +1,10 @@
 # Two publication figures for the CBF-LMM restructured manuscript.
 # 5-method roster: CBF-LMM (= validated MS_L_eBIC, MBF evaluation) + comparators.
 # Style follows sim/bench_full/make_pub_figures.R.
-setwd("/Users/kossi/Desktop/Dossier_these/Redaction/LMM_Gaussian_Bayesian")
+# Run from the project root.
 suppressPackageStartupMessages({ library(dplyr); library(ggplot2); library(scales) })
 
-OUT <- "CBF_LMM_restructured/figures"
+OUT <- "results/bench_full/figures_cbf"
 dir.create(OUT, showWarnings = FALSE, recursive = TRUE)
 
 ORDER <- c("MS_L_eBIC", "BSLMM", "BayesR", "SuSiE", "fastlmm")

@@ -15,9 +15,18 @@ suppressPackageStartupMessages(library(parallel))
 source("sim/bench_full/00_config.R")
 source("R/CBF_LMM_exact.R")
 
-LOCI <- list(
-  chr1 = "/Users/kossi/Desktop/Dossier_these/Redaction/Projet4_Binary_Individual/results_realdata/polyfun_1000g/locus_1000g_polyfun.rds",
-  chr6 = "/Users/kossi/Desktop/Dossier_these/Redaction/Projet1_donnees_brutes/locus2_chr6_1000g_polyfun.rds")
+DATA_DIR <- "data/1000g"
+LOCI <- list(chr1 = file.path(DATA_DIR, "locus_chr1_1000g.rds"),
+             chr6 = file.path(DATA_DIR, "locus_chr6_1000g.rds"))
+if (!is.na(i <- match("--locus_chr1", args <- commandArgs(TRUE))) && i < length(args))
+  LOCI$chr1 <- args[i + 1L]
+if (!is.na(i <- match("--locus_chr6", args)) && i < length(args))
+  LOCI$chr6 <- args[i + 1L]
+missing <- LOCI[!file.exists(unlist(LOCI))]
+if (length(missing))
+  stop("1000G locus panel(s) not found:\n  ",
+       paste(unlist(missing), collapse = "\n  "),
+       "\nBuild them first (see README) or pass --locus_chr1 / --locus_chr6.")
 BETA   <- c(0.7, 0.5, 0.4); K_TRUE <- 3L; TAU <- 0.5
 IN_DIR  <- "results/bench_full/25_semisynth_1000g"
 OUT_DIR <- "results/bench_full_exact/25_semisynth_1000g"
