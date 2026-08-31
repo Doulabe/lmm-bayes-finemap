@@ -24,8 +24,8 @@ dir.create(OUT, showWarnings = FALSE, recursive = TRUE)
 
 AXES <- c("01_scaling_n", "02_scaling_rho", "03_arch", "04_scaling_m")
 ROSTER <- c("MS_L_eBIC", "BSLMM", "BayesR", "SuSiE", "fastlmm")
-DISPLAY <- c(MS_L_eBIC = "\\textsc{CBF-LMM}", BSLMM = "BSLMM",
-             BayesR = "BayesR", SuSiE = "SuSiE", fastlmm = "FaST-LMM")
+DISPLAY <- c(MS_L_eBIC = "\\textsc{CBF-LMM}", BSLMM = "BayesB",
+             BayesR = "BayesR", SuSiE = "SuSiE", fastlmm = "LMM scan")
 
 read_axis <- function(root, ax) {
   fs <- list.files(file.path(root, ax), pattern = "_b[0-9]+\\.rds$",

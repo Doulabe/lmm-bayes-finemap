@@ -59,8 +59,9 @@ candidates.
   algebra; this extension and the exploratory **joint Schur-complement** score
   (more stable under within-block LD saturation) are discussed as future
   directions in the manuscript.
-- **Comparators** (same $X$, $y$, GRM): BSLMM and BayesR (joint Bayesian LMM),
-  SuSiE (credible-set), and FaST-LMM (frequentist single-SNP).
+- **Comparators** (same $X$, $y$): BayesB (BGLR) and BayesR (hibayes), sparse
+  Bayesian whole-genome regression mixtures; SuSiE (credible-set); and a
+  single-kernel LMM association scan in the spirit of FaST-LMM (rrBLUP).
 - **Sensitivity suite**: slab variance $\tau^2$, a closed-form empirical-Bayes
   slab (EB-$\tau^2$), the eBIC penalty $\gamma$, the prior on $\delta$
   (half-Cauchy vs inverse-gamma), and a $\delta$-profile identifiability
@@ -142,7 +143,7 @@ design (Supplementary Note S5 of the manuscript).
 │   │   ├── 01b-04b_*_remlbf.R       Same four axes under the REML-BF evaluation
 │   │   ├── 05-06_*.R                Mouse BMI (chromosome-wise + whole-genome)
 │   │   ├── 07_prior_sensitivity.R   Half-Cauchy vs inverse-gamma on δ
-│   │   ├── 08_add_fastlmm.R         Add FaST-LMM comparator to existing RDS
+│   │   ├── 08_add_fastlmm.R         Add the single-kernel LMM scan to existing RDS
 │   │   ├── 10_threshold_independent.R, 10c_*  Threshold-independent ranking
 │   │   ├── 11_tau2_sensitivity.R    τ² sensitivity
 │   │   ├── 12_mouse_autosomes_*.R   Autosomes-only mouse BMI scan
@@ -325,7 +326,7 @@ comm -12 data/geuvadis/eur_phase3.txt data/geuvadis/geuvadis_samples.txt \
 Headline result (best selected variant; **bold** tags the published lead at
 r2 = 1.00; "---" = empty selection at the method's prespecified threshold):
 
-| Gene | Lead eQTL | CBF-LMM | SuSiE | BSLMM | BayesR | FaST-LMM |
+| Gene | Lead eQTL | CBF-LMM | SuSiE | BayesB | BayesR | LMM scan |
 |---|---|---|---|---|---|---|
 | ERAP2 | rs2910686 | **rs2927608** | --- | **rs2910686** | **rs2910686** | --- |
 | RPS26 | rs10876864 | **rs10876864** | --- | **rs10876864** | **rs10876864** | --- |
@@ -349,8 +350,8 @@ MKL_NUM_THREADS=1` to avoid Accelerate/OpenBLAS thread contention under
 `mclapply` workers (the most common source of order-of-magnitude slowdowns).
 
 > Note: the comparison is restricted to methods that model the polygenic
-> background jointly (BSLMM, BayesR) or via credible-set decomposition
-> (SuSiE), plus a frequentist LMM reference (FaST-LMM). 
+> as sparse whole-genome regressions (BayesB, BayesR) or via credible-set
+> decomposition (SuSiE), plus a single-kernel frequentist LMM scan. 
 
 ## Internal validation
 

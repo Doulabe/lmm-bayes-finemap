@@ -51,14 +51,15 @@ boot_se <- function(x) {
   sd(replicate(R_BOOT, mean(x[sample.int(length(x), replace = TRUE)])))
 }
 fmt_pm <- function(m, s, d = 3) sprintf("$%.*f\\pm%.*f$", d, m, d, s)
+fmt_K  <- function(m, s) sprintf("$%.1f\\pm%.2f$", m, s)
 stat_row <- function(mm, sg, cols = c("f1","precision","recall","K_hat")) {
   s <- M[M$method == mm & M$sigma_g2 == sg, ]
   sapply(cols, function(cn) c(mean(s[[cn]]), boot_se(s[[cn]])))
 }
 
 ROSTER <- c("MS_L_eBIC","BSLMM","BayesR","SuSiE","fastlmm")
-DISPLAY <- c(MS_L_eBIC="\\textsc{CBF-LMM}", BSLMM="BSLMM", BayesR="BayesR",
-             SuSiE="SuSiE", fastlmm="FaST-LMM",
+DISPLAY <- c(MS_L_eBIC="\\textsc{CBF-LMM}", BSLMM="BayesB", BayesR="BayesR",
+             SuSiE="SuSiE", fastlmm="LMM scan",
              MS_L_eBIC_sharedGk="Pool-kernel variant", varbvs="varbvs")
 
 ## ── 1. tab_primary_aggregate (paper rule) ───────────────────────────────────
@@ -66,7 +67,7 @@ blk <- function(sg) vapply(ROSTER, function(mm) {
   r <- stat_row(mm, sg)
   sprintf("%s & %s & %s & %s & %s \\\\", DISPLAY[mm],
           fmt_pm(r[1,"f1"], r[2,"f1"]), fmt_pm(r[1,"precision"], r[2,"precision"]),
-          fmt_pm(r[1,"recall"], r[2,"recall"]), fmt_pm(r[1,"K_hat"], r[2,"K_hat"], 1))
+          fmt_pm(r[1,"recall"], r[2,"recall"]), fmt_K(r[1,"K_hat"], r[2,"K_hat"]))
 }, character(1))
 writeLines(c("\\begin{tabular}{lrrrr}", "\\toprule",
   "Method & $F_1\\pm\\mathrm{SE}$ & Precision $\\pm$ SE & Recall $\\pm$ SE & $\\widehat K\\pm\\mathrm{SE}$ \\\\",
@@ -128,7 +129,7 @@ ab_row <- function(mm, sg) {
           if (mm == "MS_L_eBIC") "Candidate-specific $K_{jk}$ (primary)"
           else "Pool kernel $G_k$ for all candidates",
           fmt_pm(r[1,"f1"], r[2,"f1"]), r[1,"precision"], r[1,"recall"],
-          fmt_pm(r[1,"K_hat"], r[2,"K_hat"], 1), fmt_pm(tk[1], tk[2]))
+          fmt_K(r[1,"K_hat"], r[2,"K_hat"]), fmt_pm(tk[1], tk[2]))
 }
 writeLines(c("\\begin{tabular}{lrrrrr}", "\\toprule",
   "Kernel & $F_1\\pm$ SE & Precision & Recall & $\\widehat K\\pm$ SE & Top-$K^\\star\\pm$ SE \\\\",
@@ -147,7 +148,7 @@ vb_row <- function(sg) {
   c <- stat_row("MS_L_eBIC", sg)
   sprintf("$%s$ & %s & $%.3f$ & $%.3f$ & %s & %s \\\\", format(sg),
           fmt_pm(r[1,"f1"], r[2,"f1"]), r[1,"precision"], r[1,"recall"],
-          fmt_pm(r[1,"K_hat"], r[2,"K_hat"], 1),
+          fmt_K(r[1,"K_hat"], r[2,"K_hat"]),
           fmt_pm(c[1,"f1"], c[2,"f1"]))
 }
 writeLines(c("\\begin{tabular}{lrrrrr}", "\\toprule",
