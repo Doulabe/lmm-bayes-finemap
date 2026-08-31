@@ -5,16 +5,21 @@ candidate regions under an **adaptive polygenic background**: previously
 selected SNPs enter as fixed effects and, for each candidate under
 evaluation, the remaining markers *other than that candidate* define its
 linear mixed-model polygenic background (model kernel `K_jk`), rebuilt along
-the selection path.  The released implementation amortises one shared pool
-kernel `G_k` per step — an exact rank-one perturbation of `K_jk`, validated
-at the ranking level (script 24) and at the full-path level (script 28,
-where the amortised path is always an ordered prefix of the exact path).
+the selection path.  The primary implementation (`R/CBF_LMM_exact.R`)
+evaluates this **exact candidate-specific model at shared-decomposition
+cost**: one pool eigendecomposition per step plus Sherman–Morrison rank-one
+downdates deliver every `Z_jk^{-1}` and `|Z_jk|` in closed form (validated
+against a brute-force per-candidate eigendecomposition to 2e-13).
 The candidate enters as one additional fixed effect; the residual variance is integrated out analytically, the
 variance-component ratio $\delta$ is **numerically marginalised** by
-one-dimensional Gauss–Legendre quadrature, and selection is controlled by the
-extended BIC.  A fast **plug-in REML** evaluation of $\delta$ and a
-posterior-score stopping rule are available as **sensitivity options**, and an
-exploratory **joint Schur-complement** score is retained for future development.
+one-dimensional Gauss–Legendre quadrature, and model growth is controlled by
+a **profile-ML extended BIC** on the full accepted model (the empty set is a
+possible return).  A per-candidate **REML plug-in** for $\delta$, a
+**Score-LMM ranking ablation** (`rank_by = "score"`), a posterior-score
+stopping rule, and the **amortised pool-kernel variant**
+(`MS_L_LMM_stepwise_fast()`) are available as sensitivity options; an
+exploratory **joint Schur-complement** score is retained for future
+development.
 
 > Reference: K. N. Doulabe and L. Lakhal-Chaieb, *Conditional Bayes-Factor
 > Selection with an Adaptive Polygenic Background*, 2026 (submitted).
@@ -28,9 +33,11 @@ candidates.
 
 | Paper | Code | Status |
 |---|---|---|
-| **CBF-LMM** (primary) | `CBF_LMM_stepwise()` = `MS_L_LMM_stepwise_fast()` with defaults (`delta_eval = "marginal"`, `criterion = "eBIC"`) | primary |
-| Plug-in REML evaluation | `delta_eval = "reml"` | sensitivity |
-| Posterior-score stopping | `criterion = "JointPosterior"` | sensitivity |
+| **CBF-LMM** (primary: exact `K_jk` + profile-ML eBIC) | `CBF_LMM_stepwise_exact()` in `R/CBF_LMM_exact.R` (defaults: `delta_eval = "marginal"`) | primary |
+| Per-candidate REML plug-in for $\delta$ | `CBF_LMM_stepwise_exact(delta_eval = "reml")` | sensitivity |
+| Conditional Score-LMM ranking ablation | `CBF_LMM_stepwise_exact(rank_by = "score")` | ablation |
+| Amortised pool-kernel variant (`G_k` for all candidates) | `CBF_LMM_stepwise()` = `MS_L_LMM_stepwise_fast()` | variant (Note S3) |
+| Posterior-score stopping | `criterion = "JointPosterior"` (amortised variant) | sensitivity |
 | Joint Schur-complement score | `JS_L_LMM_stepwise_fast()` | exploratory / future work |
 
 ## Highlights
@@ -159,6 +166,17 @@ design (Supplementary Note S5 of the manuscript).
 │   │   ├── 26_geuvadis_eqtl.R       GEUVADIS human cis-eQTL illustration
 │   │   ├── make_geuvadis_table.R    GEUVADIS results table
 │   │   ├── 28_path_kernel_validation.R  Full-path validation of the shared-pool amortisation
+│   │   ├── 30_exact_rerun.R         Exact-K_jk rerun of the controlled benchmark (same seeds)
+│   │   ├── 31_exact_reml_anchor.R   REML-plug-in arm on the anchor (exact engine)
+│   │   ├── 32_topk_exact.R          Top-K* ranking with the exact engine (forced K*)
+│   │   ├── 33_semisynth_exact.R     Semi-synthetic 1000G rerun (exact engine)
+│   │   ├── 34_geuvadis_exact.R      GEUVADIS rerun (exact engine)
+│   │   ├── 35_mouse_exact.R         Mouse autosomes rerun (exact engine)
+│   │   ├── 36_make_exact_tables.R   Manuscript tables from the exact campaign
+│   │   ├── 37_exact_summaries_figures.R  Summary CSVs + manuscript figures
+│   │   ├── 38_final_pooling.R       THE pooling rule (16 unique cells, anchor once)
+│   │   ├── 39_exact_tau2_gamma_anchor.R  Exact slab/eBIC-penalty sweeps on the anchor
+│   │   ├── 40_score_ablation_exact.R     Bayes-factor vs Q^2 ranking ablation
 │   │   └── run_all.R                Single-command driver (axes 01–06)
 │   └── validate_lmm_bayes.R      Six-check internal validation (V1–V6)
 ├── examples/                  Minimal demos
@@ -236,6 +254,19 @@ Rscript sim/bench_full/make_geuvadis_table.R
 # 10. Shared-pool amortisation validation (Supplementary Note S3)
 Rscript sim/bench_full/24_shared_kernel_validation.R   # per-step ranking agreement
 Rscript sim/bench_full/28_path_kernel_validation.R     # full-path prefix/stopping agreement
+
+# 11. Exact-K_jk campaign (primary results of the paper)
+Rscript sim/bench_full/30_exact_rerun.R --cores 5      # controlled benchmark, same seeds
+Rscript sim/bench_full/31_exact_reml_anchor.R          # REML plug-in arm (anchor)
+Rscript sim/bench_full/32_topk_exact.R --cores 5       # Top-K* ranking
+Rscript sim/bench_full/33_semisynth_exact.R --cores 5  # semi-synthetic 1000G
+Rscript sim/bench_full/34_geuvadis_exact.R             # GEUVADIS
+Rscript sim/bench_full/35_mouse_exact.R                # mouse autosomes
+Rscript sim/bench_full/39_exact_tau2_gamma_anchor.R    # slab / eBIC-penalty sweeps
+Rscript sim/bench_full/40_score_ablation_exact.R       # Bayes-factor vs Q^2 ablation
+Rscript sim/bench_full/38_final_pooling.R              # pooled tables (paper rule)
+Rscript sim/bench_full/36_make_exact_tables.R          # remaining manuscript tables
+Rscript sim/bench_full/37_exact_summaries_figures.R    # summary CSVs + figures
 ```
 
 ### Semi-synthetic 1000G benchmark

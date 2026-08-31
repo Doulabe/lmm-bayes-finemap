@@ -27,7 +27,8 @@ abstract: >-
   each step the candidate-specific marginal likelihood integrates the
   residual variance analytically and the variance-component ratio is
   numerically marginalised by one-dimensional Gauss-Legendre
-  quadrature; selection is controlled by the extended BIC.  The
+  quadrature; model growth is controlled by a profile-maximum-likelihood
+  extended BIC on the full accepted model.  The
   conditional Bayes factor recovers Wakefield's approximate Bayes
   factor asymptotically in the residual degrees of freedom.  A plug-in REML evaluation of the
   variance-component ratio and a posterior-score stopping rule are
