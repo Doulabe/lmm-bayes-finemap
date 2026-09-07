@@ -36,7 +36,7 @@ candidates.
 | **CBF-LMM** (primary: exact `K_jk` + profile-ML eBIC) | `CBF_LMM_stepwise_exact()` in `R/CBF_LMM_exact.R` (defaults: `delta_eval = "marginal"`) | primary |
 | Per-candidate REML plug-in for $\delta$ | `CBF_LMM_stepwise_exact(delta_eval = "reml")` | sensitivity |
 | Conditional Score-LMM ranking ablation | `CBF_LMM_stepwise_exact(rank_by = "score")` | ablation |
-| Amortised pool-kernel variant (`G_k` for all candidates) | `CBF_LMM_stepwise()` = `MS_L_LMM_stepwise_fast()` | variant (Note S3) |
+| Amortised pool-kernel variant (`G_k` for all candidates) | `CBF_LMM_stepwise()` = `MS_L_LMM_stepwise_fast()` | variant (Appendix B) |
 | Posterior-score stopping | `criterion = "JointPosterior"` (amortised variant) | sensitivity |
 | Joint Schur-complement score | `JS_L_LMM_stepwise_fast()` | exploratory / future work |
 
@@ -118,7 +118,7 @@ The script ranks candidates at the default, maximizes the closed-form Bayes
 factor in $\tau^2$ for the leading candidate at each step (`tau2_mode = "eb"`
 in the in-script stepwise), reports the distribution of the per-step estimates,
 and verifies that the selected sets match the fixed default on the anchor
-design (Supplementary Note S5 of the manuscript).
+design (Appendix D of the manuscript).
 
 ## Repository layout
 
@@ -252,7 +252,7 @@ Rscript sim/bench_full/make_cbf_rho_table.R
 Rscript sim/bench_full/26_geuvadis_eqtl.R
 Rscript sim/bench_full/make_geuvadis_table.R
 
-# 10. Shared-pool amortisation validation (Supplementary Note S3)
+# 10. Shared-pool amortisation validation (Appendix B)
 Rscript sim/bench_full/24_shared_kernel_validation.R   # per-step ranking agreement
 Rscript sim/bench_full/28_path_kernel_validation.R     # full-path prefix/stopping agreement
 
