@@ -8,7 +8,7 @@ linear mixed-model polygenic background (model kernel `K_jk`), rebuilt along
 the selection path.  The primary implementation (`R/CBF_LMM_exact.R`)
 evaluates this **exact candidate-specific model at shared-decomposition
 cost**: one pool eigendecomposition per step plus Sherman–Morrison rank-one
-downdates deliver every `Z_jk^{-1}` and `|Z_jk|` in closed form (validated
+downdates deliver every `V_jk^{-1}` and `|V_jk|` in closed form (validated
 against a brute-force per-candidate eigendecomposition to 2e-13).
 The candidate enters as one additional fixed effect; the residual variance is integrated out analytically, the
 variance-component ratio $\delta$ is **numerically marginalised** by
@@ -251,6 +251,15 @@ Rscript sim/bench_full/make_cbf_rho_table.R
 # 9.  GEUVADIS human cis-eQTL illustration (see data section below)
 Rscript sim/bench_full/26_geuvadis_eqtl.R
 Rscript sim/bench_full/make_geuvadis_table.R
+
+# 11b. Reviewer-pass analyses (one-to-one matching benchmark, sensitivities)
+Rscript sim/bench_full/42_semisynth_matching.R --cores 5 --B 200   # semisynthetic rerun, one-to-one max-matching metrics (Table 4)
+Rscript sim/bench_full/43_pip_thresholds.R     --cores 5 --B 100   # SuSiE/BayesR PIP-threshold sensitivity (Appendix D)
+Rscript sim/bench_full/45_correlated_causals.R --cores 5 --B 100   # same-block correlated-causal stress test (Appendix C)
+Rscript sim/bench_full/46_delta_bounds.R       --cores 5 --B 100   # delta-grid truncation check (Appendix A)
+Rscript sim/bench_full/44_mcmc_stability.R     --cores 5 --B 50    # MCMC convergence control (reviewer reserve; remove sim/bench_full/SKIP_44 first)
+Rscript sim/bench_full/47_make_matching_tables.R                   # regenerate Table 4 + by-locus table
+Rscript sim/bench_full/48_make_reviewer_tables.R                   # regenerate Appendix C/D tables
 
 # 10. Shared-pool amortisation validation (Appendix B)
 Rscript sim/bench_full/24_shared_kernel_validation.R   # per-step ranking agreement
