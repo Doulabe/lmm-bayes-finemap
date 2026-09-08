@@ -257,7 +257,7 @@ Rscript sim/bench_full/42_semisynth_matching.R --cores 5 --B 200   # semisynthet
 Rscript sim/bench_full/43_pip_thresholds.R     --cores 5 --B 100   # SuSiE/BayesR PIP-threshold sensitivity (Appendix D)
 Rscript sim/bench_full/45_correlated_causals.R --cores 5 --B 100   # same-block correlated-causal stress test (Appendix C)
 Rscript sim/bench_full/46_delta_bounds.R       --cores 5 --B 100   # delta-grid truncation check (Appendix A)
-Rscript sim/bench_full/44_mcmc_stability.R     --cores 5 --B 50    # MCMC convergence control (reviewer reserve; remove sim/bench_full/SKIP_44 first)
+Rscript sim/bench_full/44_mcmc_stability.R     --cores 5 --B 10    # MCMC chain-length control (Appendix D)
 Rscript sim/bench_full/47_make_matching_tables.R                   # regenerate Table 4 + by-locus table
 Rscript sim/bench_full/48_make_reviewer_tables.R                   # regenerate Appendix C/D tables
 
