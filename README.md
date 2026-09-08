@@ -252,6 +252,9 @@ Rscript sim/bench_full/make_cbf_rho_table.R
 Rscript sim/bench_full/26_geuvadis_eqtl.R
 Rscript sim/bench_full/make_geuvadis_table.R
 
+# 0. Minimal reproducible example (no external data; a few minutes on a laptop)
+Rscript examples/minimal_example.R
+
 # 11b. Reviewer-pass analyses (one-to-one matching benchmark, sensitivities)
 Rscript sim/bench_full/42_semisynth_matching.R --cores 5 --B 200   # semisynthetic rerun, one-to-one max-matching metrics (Table 4)
 Rscript sim/bench_full/43_pip_thresholds.R     --cores 5 --B 100   # SuSiE/BayesR PIP-threshold sensitivity (Appendix D)

@@ -54,7 +54,9 @@ all_df <- bind_rows(
   load_axis("04_scaling_m")   %>% mutate(axis = "m")
 ) %>% mutate(mean_fdr = 1 - mean_precision)
 p2 <- ggplot(all_df, aes(mean_fdr, mean_recall, colour = method, shape = method)) +
-  geom_point(size = 2.4, alpha = 0.75) +
+  geom_point(size = 2.8, alpha = 0.85,
+             position = position_jitter(width = 0.008, height = 0.008,
+                                        seed = 20260908)) +
   facet_wrap(~ sg, nrow = 1, labeller = label_parsed) +
   scale_colour_manual(values = COLS, labels = LABS, drop = FALSE) +
   scale_shape_manual(values = SHAPES, labels = LABS, drop = FALSE) +
