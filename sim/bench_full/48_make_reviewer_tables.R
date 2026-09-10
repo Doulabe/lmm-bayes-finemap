@@ -2,9 +2,26 @@
 # 48_make_reviewer_tables.R
 # Manuscript tables for the correlated-causal stress test (45) and the
 # PIP-threshold sensitivity (43).
+# The summaries are rebuilt here from the per-replicate checkpoints (and the
+# summary CSVs refreshed), so in-place payload updates such as the BayesR
+# long-budget rerun (51) can never leave these tables stale.
 # ==============================================================================
-IN45 <- read.csv("results/bench_full_exact/45_correlated_causals/correlated_causals_summary.csv")
-IN43 <- read.csv("results/bench_full_exact/43_pip_thresholds/pip_threshold_summary.csv")
+D45 <- "results/bench_full_exact/45_correlated_causals"
+res45 <- do.call(rbind, lapply(
+  list.files(D45, pattern = "^rho.*rds$", full.names = TRUE),
+  function(f) readRDS(f)$rows))
+IN45 <- aggregate(cbind(K_hat, tp, precision, recall, f1) ~
+                    method + rho + sigma_g2, res45, mean)
+write.csv(IN45, file.path(D45, "correlated_causals_summary.csv"),
+          row.names = FALSE)
+
+D43 <- "results/bench_full_exact/43_pip_thresholds"
+res43 <- do.call(rbind, lapply(
+  list.files(D43, pattern = "^sg.*rds$", full.names = TRUE), readRDS))
+IN43 <- aggregate(cbind(K_hat, precision, recall, f1) ~
+                    method + threshold + sigma_g2, res43, mean)
+write.csv(IN43, file.path(D43, "pip_threshold_summary.csv"),
+          row.names = FALSE)
 OUT  <- "CBF_LMM_restructured/tables"
 DISP <- c(MS_L_eBIC = "\\textsc{CBF-LMM}", BSLMM = "BayesB", BayesR = "BayesR",
           SuSiE = "SuSiE", fastlmm = "LMM scan")
