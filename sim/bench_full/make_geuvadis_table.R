@@ -21,7 +21,7 @@ i <- match("--out_dir", args)
 OUT <- if (!is.na(i)) args[i + 1L] else "results/bench_full/tables_cbf"
 dir.create(OUT, recursive = TRUE, showWarnings = FALSE)
 
-RES <- "results/bench_full/26_geuvadis"
+RES <- "results/bench_full_exact/26_geuvadis"
 D   <- "data/geuvadis"
 p2r_file <- if (file.exists(file.path(D, "pos2rs.csv"))) file.path(D, "pos2rs.csv") else "sim/bench_full/geuvadis_pos2rs.csv"
 p2r <- read.csv(p2r_file, header = FALSE,
@@ -38,8 +38,8 @@ GENES <- data.frame(
                213049214L, 42944850L, 23143113L, 9544276L),
   stringsAsFactors = FALSE)
 
-LAB  <- c(MS_L_eBIC = "\\textsc{CBF-LMM}", SuSiE = "SuSiE", BSLMM = "BSLMM",
-          BayesR = "BayesR", fastlmm = "FaST-LMM")
+LAB  <- c(MS_L_eBIC = "\\textsc{CBF-LMM}", SuSiE = "SuSiE", BSLMM = "BayesB",
+          BayesR = "BayesR", fastlmm = "LMM scan")
 MORD <- names(LAB)
 gt2d <- function(v) { d <- integer(length(v))
   d[v %in% c("0|1", "1|0", "0/1", "1/0")] <- 1L

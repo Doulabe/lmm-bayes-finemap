@@ -59,8 +59,9 @@ candidates.
   algebra; this extension and the exploratory **joint Schur-complement** score
   (more stable under within-block LD saturation) are discussed as future
   directions in the manuscript.
-- **Comparators** (same $X$, $y$): BayesB (BGLR) and BayesR (hibayes), sparse
-  Bayesian whole-genome regression mixtures; SuSiE (credible-set); and a
+- **Comparators** (same $X$, $y$): BayesB (BGLR; 2,000 iterations / 400 burn-in)
+  and BayesR (hibayes; 10,000 iterations / 2,000 burn-in, per the chain-length
+  control of Appendix D), sparse Bayesian whole-genome regression mixtures; SuSiE (credible-set); and a
   single-kernel LMM association scan in the spirit of FaST-LMM (rrBLUP).
 - **Sensitivity suite**: slab variance $\tau^2$, a closed-form empirical-Bayes
   slab (EB-$\tau^2$), the eBIC penalty $\gamma$, the prior on $\delta$
@@ -264,6 +265,10 @@ Rscript sim/bench_full/44_mcmc_stability.R     --cores 5 --B 10    # MCMC chain-
 Rscript sim/bench_full/47_make_matching_tables.R                   # regenerate Table 4 + by-locus table
 Rscript sim/bench_full/48_make_reviewer_tables.R                   # regenerate Appendix C/D tables
 
+# 11c. BayesR long-budget rerun (10,000/2,000 across every benchmark; short-chain
+#      rows are preserved in the payloads under BayesR_2k; idempotent, in-place)
+bash sim/bench_full/driver_bayesr2.sh                              # 50 (controlled) -> 51 (semisynth/correlated/thresholds) -> 52 (GEUVADIS/mouse)
+
 # 10. Shared-pool amortisation validation (Appendix B)
 Rscript sim/bench_full/24_shared_kernel_validation.R   # per-step ranking agreement
 Rscript sim/bench_full/28_path_kernel_validation.R     # full-path prefix/stopping agreement
@@ -340,12 +345,12 @@ r2 = 1.00; "---" = empty selection at the method's prespecified threshold):
 
 | Gene | Lead eQTL | CBF-LMM | SuSiE | BayesB | BayesR | LMM scan |
 |---|---|---|---|---|---|---|
-| ERAP2 | rs2910686 | **rs2927608** | --- | **rs2910686** | **rs2910686** | --- |
+| ERAP2 | rs2910686 | **rs2927608** | --- | **rs2910686** | --- | --- |
 | RPS26 | rs10876864 | **rs10876864** | --- | **rs10876864** | **rs10876864** | --- |
 | SLFN5 | rs11080327 | **rs11080327** | **rs11080327** | rs883416 (0.97) | **rs11080327** | **rs11080327** |
 | SNHG5 | rs1059307 | **rs1059307** | **rs1059307** | **rs1059307** | **rs1059307** | --- |
-| FLVCR1-AS1 | rs12123978 | **rs61832055** | --- | **rs11120042** | **rs10864005** | --- |
-| PEX6-region | rs6907751 | rs9986447 +1 (0.88) | **rs6907751** +1 | rs2296804 (0.63) | rs2296805 (0.63) | --- |
+| FLVCR1-AS1 | rs12123978 | **rs61832055** | --- | **rs11120042** | --- | --- |
+| PEX6-region | rs6907751 | rs9986447 +1 (0.88) | **rs6907751** +1 | rs2296804 (0.63) | --- | --- |
 | TRA2A-AS | rs10233039 | **rs6461691** | --- | rs10266123 (0.99) | --- | --- |
 | ZNF266 | rs10420709 | **rs11878970** | --- | **rs10411141** | --- | --- |
 

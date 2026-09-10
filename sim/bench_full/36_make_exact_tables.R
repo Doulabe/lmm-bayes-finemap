@@ -227,9 +227,17 @@ writeLines(supp_axis("02_scaling_rho", "rho", "rho", "$\\rho=%.2f$"),
            file.path(OUT, "tab_supp_by_rho_primary.tex"))
 writeLines(supp_axis("04_scaling_m", "m", "m", "$m=%d$"),
            file.path(OUT, "tab_supp_by_m_primary.tex"))
-# arch axis: the raw metrics may lack a "signal" column; reconstruct from K_hat
-# impossible — use the raw CSV which kept "signal" if present
-arch_raw <- read.csv(file.path(EX, "03_arch_raw.csv"))
+# arch axis: the signal level is not in the metrics; rebuild the raw CSV from
+# the payloads (filename carries the level) so it can never go stale
+arch_fs <- list.files(file.path(EX, "03_arch"), pattern = "_b[0-9]+\\.rds$",
+                      full.names = TRUE)
+arch_raw <- do.call(rbind, lapply(arch_fs, function(f) {
+  m <- readRDS(f)$metrics
+  m$signal   <- sub("^sig([a-z]+)_.*", "\\1", basename(f))
+  m$sigma_g2 <- as.numeric(sub(".*_sg([0-9.]+)_b.*", "\\1", basename(f)))
+  m
+}))
+write.csv(arch_raw, file.path(EX, "03_arch_raw.csv"), row.names = FALSE)
 if ("signal" %in% names(arch_raw)) {
   D <- arch_raw[arch_raw$method %in% ROSTER, ]
   body <- character(0)

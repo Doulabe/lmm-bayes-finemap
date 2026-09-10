@@ -11,6 +11,7 @@ OUT <- "/Users/kossi/Desktop/Dossier_these/Redaction/LMM_Gaussian_Bayesian/CBF_L
 
 fs <- list.files(IN, pattern = "^chr.*rds$", full.names = TRUE)
 M <- do.call(rbind, lapply(fs, function(f) readRDS(f)$rows))
+M <- M[M$method != "BayesR_2k", ]
 stopifnot(nrow(M) == 800 * 5)
 
 boot_se <- function(x) {
